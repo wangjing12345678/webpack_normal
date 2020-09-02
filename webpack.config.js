@@ -1,6 +1,6 @@
 const path = require('path');
 const HTMLPlugin = require('html-webpack-plugin');
-// let extractPlugin = require('extract-text-webpack-plugin');
+let ExtractTextPlugin = require('extract-text-webpack-plugin');
 const webpack = require('webpack');
 let env = process.env.NODE_ENV;
 console.log(env);
@@ -10,22 +10,22 @@ if (env == 'development') {
     config = {
         mode: 'development',
         entry: {
-            index: path.join(__dirname, 'js/index.js'),
-            er: path.join(__dirname, 'js/er.js'),
+            index: path.join(__dirname, 'static/js/index.js'),
+            er: path.join(__dirname, 'static/js/er.js'),
         },
         output: {
             publicPath: '/',
-            filename: 'js/[name].js', // 文件输出
+            filename: 'static/js/[name].js', // 文件输出
             path: path.join(__dirname, 'dist')
         },
         module: {
             rules: [
                 {
                     test: /\.css$/, // 处理css文件
-                    use: [
-                        'style-loader',
-                        'css-loader'
-                    ]
+                    use: ExtractTextPlugin.extract({
+                        fallback: "style-loader",
+                        use: "css-loader"
+                    })
                 },
                 {
                     test: /\.(gif|jpg|jpeg|png|svg)$/, // 处理图片文件
@@ -42,6 +42,7 @@ if (env == 'development') {
             ]
         },
         plugins: [
+            new ExtractTextPlugin("./static/css/index.css"),
             new HTMLPlugin({ // 打包输出HTML
                 filename: 'views/index.html',
                 template: './views/index.html',
@@ -68,22 +69,22 @@ if (env == 'development') {
     config = {
         mode: 'production',
         entry: {
-            index: path.join(__dirname, 'js/index.js'),
-            er: path.join(__dirname, 'js/er.js'),
+            index: path.join(__dirname, 'static/js/index.js'),
+            er: path.join(__dirname, 'static/js/er.js'),
         },
         output: {
-            publicPath: '../',
-            filename: 'js/[name].js', // 文件输出
+            publicPath: '../../',
+            filename: 'static/js/[name].js', // 文件输出
             path: path.join(__dirname, 'dist')
         },
         module: {
             rules: [
                 {
                     test: /\.css$/, // 处理css文件
-                    use: [
-                        'style-loader',
-                        'css-loader'
-                    ]
+                    use: ExtractTextPlugin.extract({
+                        fallback: "style-loader",
+                        use: "css-loader"
+                    })
                 },
                 {
                     test: /\.(gif|jpg|jpeg|png|svg)$/, // 处理图片文件
@@ -92,7 +93,8 @@ if (env == 'development') {
                             loader: 'url-loader',
                             options: {
                                 limit: 1024,
-                                name: 'static/image/[name].[ext]',
+                                name: 'image/[name].[ext]',
+                                outputPath:'static/',
                             }
                         }
                     ]
@@ -100,6 +102,7 @@ if (env == 'development') {
             ]
         },
         plugins: [
+            new ExtractTextPlugin("./static/css/index.css"),
             new HTMLPlugin({ // 打包输出HTML
                 filename: 'views/index.html',
                 template: './views/index.html',
